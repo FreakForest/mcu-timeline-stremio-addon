@@ -2,7 +2,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { publishToCentral } = require('stremio-addon-sdk');
 
-const MANIFEST_URL = 'https://0f9587522331-mcu-timeline-stremio-addon.beamup.club/manifest.json';
+const MANIFEST_URL = 'https://0f9587522331-mcu-timeline-stremio-addon.baby-beamup.club/manifest.json';
 const EXPECTED_ID = 'com.freakforest.mcutimeline';
 
 function runNode(args) {
