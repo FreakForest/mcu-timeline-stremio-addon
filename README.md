@@ -45,50 +45,54 @@ Stremio requires HTTPS for remote add-ons; `127.0.0.1` is the local exception.
 
 ## Deploy to BeamUp
 
-Stremio's Addon SDK recommends BeamUp for hosted add-ons.
+Stremio's Addon SDK recommends BeamUp for hosted add-ons. This repository includes a deployment helper, so no manual BeamUp configuration is needed.
 
 Prerequisites on the computer used for the first deployment:
 
-- Node.js
+- Node.js 20+
 - Git
-- a GitHub account
-- an SSH key registered with GitHub
+- OpenSSH (included in current Windows versions)
+- an SSH key whose public key is registered on the GitHub account `FreakForest`
 
-Install and configure BeamUp:
-
-```bash
-npm install -g beamup-cli
-beamup config
-```
-
-When asked for a BeamUp host, use:
-
-```text
-a.baby-beamup.club
-```
-
-Then, from this repository:
+From a clone of this repository, run:
 
 ```bash
 npm install
 npm run check
-beamup
+npm run deploy:beamup
 ```
 
-The app already listens on `process.env.PORT`, as required by BeamUp.
+The helper automatically:
 
-BeamUp will return a public HTTPS URL. The Stremio installation URL is:
+1. syncs the public SSH keys from the `FreakForest` GitHub account with BeamUp;
+2. configures the correct `beamup` git remote;
+3. deploys the current commit to Stremio's BeamUp host;
+4. prints the public Stremio manifest URL.
+
+No private SSH key is uploaded by the helper. Git/SSH uses the key already stored on your computer.
+
+Expected public manifest after a successful deployment:
 
 ```text
-https://YOUR-BEAMUP-HOST/manifest.json
+https://0f9587522331-mcu-timeline-stremio-addon.beamup.club/manifest.json
 ```
+
+The app listens on `process.env.PORT`, as required by BeamUp.
 
 ## Publish to Stremio's public catalog
 
-After the BeamUp URL is live and `/manifest.json` is reachable:
+After the BeamUp URL is live and `/manifest.json` has been verified:
+
+### Windows PowerShell
+
+```powershell
+$env:ADDON_URL='https://0f9587522331-mcu-timeline-stremio-addon.beamup.club/manifest.json'; npm run publish
+```
+
+### macOS/Linux
 
 ```bash
-ADDON_URL=https://YOUR-BEAMUP-HOST/manifest.json npm run publish
+ADDON_URL=https://0f9587522331-mcu-timeline-stremio-addon.beamup.club/manifest.json npm run publish
 ```
 
 `publish.js` uses the official SDK's `publishToCentral()` helper.
