@@ -14,9 +14,14 @@ function hashUser(value) {
     .slice(0, 12);
 }
 
+function publicBaseDomain(host) {
+  const parts = host.split('.');
+  return parts.length === 4 ? parts.slice(-3).join('.') : parts.slice(-2).join('.');
+}
+
 const accountHash = hashUser(GITHUB_USER);
 const remoteUrl = `dokku@${HOST}:${accountHash}/${PROJECT}`;
-const projectHost = `${accountHash}-${PROJECT}.beamup.club`;
+const projectHost = `${accountHash}-${PROJECT}.${publicBaseDomain(HOST)}`;
 const manifestUrl = `https://${projectHost}/manifest.json`;
 
 function runGit(args, { capture = false, allowFailure = false } = {}) {
@@ -78,9 +83,7 @@ async function main() {
   configureRemote();
 
   console.log('Deployer den aktuelle commit til BeamUp…');
-  const gitSshCommand = process.platform === 'win32'
-    ? 'ssh -o StrictHostKeyChecking=accept-new'
-    : 'ssh -o StrictHostKeyChecking=accept-new';
+  const gitSshCommand = 'ssh -o StrictHostKeyChecking=accept-new';
 
   const result = spawnSync('git', ['push', '--force', 'beamup', 'HEAD:master'], {
     cwd: process.cwd(),
@@ -91,7 +94,7 @@ async function main() {
 
   if (result.error || result.status !== 0) {
     console.error('\nDeployment fejlede. Den mest almindelige årsag er, at denne PC ikke har en SSH-nøgle, der er tilføjet til GitHub-kontoen FreakForest.');
-    console.error('Tjek med: ssh -T git@github.com');
+    console.error('Tjek med: ssh -T -l git github.com');
     process.exit(result.status || 1);
   }
 
