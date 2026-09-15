@@ -2,24 +2,23 @@ const { addonBuilder } = require('stremio-addon-sdk');
 const { ensureFresh, getCachedData } = require('./official-data');
 
 const CINEMETA = 'https://v3-cinemeta.strem.io';
-const PAGE_SIZE = 20;
 const resolvedCache = new Map();
 const metaCache = new Map();
 
 const manifest = {
   id: 'com.freakforest.mcutimeline',
-  version: '3.2.0',
+  version: '3.3.0',
   name: 'MCU Timeline – Official Chronology',
   description: 'Marvel/Disney+ MCU Complete Timeline in official chronological order. Auto-refreshes from Marvel and provides metadata only — no streams.',
   resources: ['catalog', 'meta'],
   types: ['movie', 'series'],
   idPrefixes: ['mcu-series-'],
   catalogs: [
-    { type: 'movie', id: 'mcu-timeline-all', name: 'MCU Timeline • Alt', extra: [{ name: 'skip', isRequired: false }] },
-    { type: 'movie', id: 'mcu-timeline-movies', name: 'MCU Timeline • Film & Specials', extra: [{ name: 'skip', isRequired: false }] },
-    { type: 'series', id: 'mcu-timeline-series', name: 'MCU Timeline • Serier', extra: [{ name: 'skip', isRequired: false }] },
-    { type: 'movie', id: 'mcu-upcoming-movies', name: 'MCU • Kommende film', extra: [{ name: 'skip', isRequired: false }] },
-    { type: 'series', id: 'mcu-upcoming-series', name: 'MCU • Kommende serier', extra: [{ name: 'skip', isRequired: false }] }
+    { type: 'movie', id: 'mcu-timeline-all', name: 'MCU Timeline • All' },
+    { type: 'movie', id: 'mcu-timeline-movies', name: 'MCU Timeline • Movies & Specials' },
+    { type: 'series', id: 'mcu-timeline-series', name: 'MCU Timeline • Series' },
+    { type: 'movie', id: 'mcu-upcoming-movies', name: 'MCU • Upcoming Movies' },
+    { type: 'series', id: 'mcu-upcoming-series', name: 'MCU • Upcoming Series' }
   ]
 };
 
@@ -77,7 +76,7 @@ async function searchCinemeta(entry) {
       for (const meta of (data.metas || [])) candidates.push({ ...meta, type: meta.type || type });
     } catch (_) {}
   }
-  if (!candidates.length) throw new Error(`Ingen Cinemeta-match: ${entry.title}`);
+  if (!candidates.length) throw new Error(`No Cinemeta match: ${entry.title}`);
 
   const chosen = [...candidates].sort((a, b) => scoreResult(b, entry) - scoreResult(a, entry))[0];
   resolvedCache.set(key, chosen);
@@ -88,7 +87,7 @@ async function getCinemetaMeta(type, imdbId) {
   const key = `${type}:${imdbId}`;
   if (metaCache.has(key)) return metaCache.get(key);
   const data = await fetchJson(`${CINEMETA}/meta/${type}/${imdbId}.json`);
-  if (!data.meta) throw new Error(`Ingen metadata: ${type}/${imdbId}`);
+  if (!data.meta) throw new Error(`No metadata: ${type}/${imdbId}`);
   metaCache.set(key, data.meta);
   return data.meta;
 }
@@ -103,9 +102,9 @@ function seriesCustomId(entry) {
 
 function sourceStatus() {
   const state = getCachedData();
-  const checked = state.checkedAt ? new Date(state.checkedAt).toLocaleString('da-DK', { timeZone: 'Europe/Copenhagen' }) : 'afventer første tjek';
-  const fallback = state.error ? ` Marvel-tjek fejlede senest (${state.error}); senest kendte data bruges.` : '';
-  return `Datakilde: ${state.source}. Sidst kontrolleret: ${checked}.${fallback}`;
+  const checked = state.checkedAt ? new Date(state.checkedAt).toISOString() : 'awaiting first check';
+  const fallback = state.error ? ` The latest Marvel refresh failed (${state.error}); the last known valid data is being used.` : '';
+  return `Data source: ${state.source}. Last checked: ${checked}.${fallback}`;
 }
 
 function moviePreview(entry, meta) {
@@ -114,7 +113,7 @@ function moviePreview(entry, meta) {
     id: meta.id,
     type: 'movie',
     name: `${numberLabel(entry)} • ${entry.title}`,
-    description: `Officiel MCU-tidslinje #${entry.n}. ${sourceStatus()}\n\n${meta.description || ''}`.trim()
+    description: `Official MCU timeline #${entry.n}. ${sourceStatus()}\n\n${meta.description || ''}`.trim()
   };
 }
 
@@ -130,7 +129,7 @@ function seriesPreview(entry, meta) {
     logo: meta.logo,
     releaseInfo: meta.releaseInfo,
     genres: meta.genres,
-    description: `Officiel MCU-tidslinje #${entry.n}. Kun sæson ${season} vises i dette kort. ${sourceStatus()}`
+    description: `Official MCU timeline #${entry.n}. Only season ${season} is included on this card. ${sourceStatus()}`
   };
 }
 
@@ -148,7 +147,7 @@ function upcomingPreview(entry, meta) {
   return {
     ...meta,
     name: `${entry.title} • ${date}`,
-    description: `Officielt annonceret MCU-projekt. Udgivelse: ${date}. Den præcise placering i Marvel/Disney+ MCU Complete Timeline er endnu ikke offentliggjort.\n\n${meta.description || ''}`.trim()
+    description: `Officially announced MCU project. Release: ${date}. Its exact placement in Marvel/Disney+'s MCU Complete Timeline has not yet been officially published.\n\n${meta.description || ''}`.trim()
   };
 }
 
@@ -165,7 +164,6 @@ async function safeMap(entries, mapper) {
 builder.defineCatalogHandler(async (args) => {
   await ensureFresh();
   const { timeline, upcoming } = getCachedData();
-  const skip = Math.max(0, Number(args.extra && args.extra.skip) || 0);
 
   let source;
   let mapper;
@@ -178,7 +176,7 @@ builder.defineCatalogHandler(async (args) => {
       source = timeline.filter(x => x.type === 'movie' || x.type === 'unknown');
       mapper = async (entry) => {
         const result = await timelinePreview(entry);
-        if (result.type !== 'movie') throw new Error('Ikke en film');
+        if (result.type !== 'movie') throw new Error('Not a movie');
         return result;
       };
       break;
@@ -186,7 +184,7 @@ builder.defineCatalogHandler(async (args) => {
       source = timeline.filter(x => x.type === 'series' || x.type === 'unknown');
       mapper = async (entry) => {
         const result = await timelinePreview(entry);
-        if (result.type !== 'series') throw new Error('Ikke en serie');
+        if (result.type !== 'series') throw new Error('Not a series');
         return result;
       };
       break;
@@ -202,8 +200,7 @@ builder.defineCatalogHandler(async (args) => {
       return { metas: [] };
   }
 
-  const page = source.slice(skip, skip + PAGE_SIZE);
-  const metas = await safeMap(page, mapper);
+  const metas = await safeMap(source, mapper);
   return { metas, cacheMaxAge: 3600, staleRevalidate: 86400, staleError: 604800 };
 });
 
@@ -229,7 +226,7 @@ builder.defineMetaHandler(async (args) => {
       id: seriesCustomId(entry),
       type: 'series',
       name: `${numberLabel(entry)} • ${entry.title} — S${season}`,
-      description: `Officiel MCU-tidslinje #${entry.n}. Dette kort indeholder kun sæson ${season}. ${sourceStatus()}\n\n${original.description || ''}`,
+      description: `Official MCU timeline #${entry.n}. This card contains only season ${season}. ${sourceStatus()}\n\n${original.description || ''}`,
       videos
     },
     cacheMaxAge: 3600,
