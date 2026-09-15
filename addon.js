@@ -8,7 +8,7 @@ const metaCache = new Map();
 
 const manifest = {
   id: 'com.freakforest.mcutimeline',
-  version: '3.0.0',
+  version: '3.1.0',
   name: 'MCU Timeline – Official Chronology',
   description: 'Marvel/Disney+ MCU Complete Timeline in official chronological order. Auto-refreshes from Marvel and provides metadata only — no streams.',
   resources: ['catalog', 'meta'],
