@@ -1,5 +1,7 @@
 # MCU Timeline – Official Chronology for Stremio
 
+**Built with help from ChatGPT by OpenAI.**
+
 A metadata/catalog-only Stremio add-on that follows Marvel/Disney+'s **official MCU Complete Timeline**. It provides no streams, torrents, or playback sources.
 
 ## What it does
