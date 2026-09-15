@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check addon.js && node --check official-data.js && node --check server.js && node --check publish.js && node --check scripts/deploy-beamup.js",
+    "check": "node --check addon.js && node --check official-data.js && node --check server.js && node --check publish.js && node --check scripts/deploy-beamup.js && node --check scripts/deploy-and-publish.js",
     "deploy:beamup": "node scripts/deploy-beamup.js",
+    "deploy:all": "node scripts/deploy-and-publish.js",
     "publish": "node publish.js"
   },
   "engines": {
