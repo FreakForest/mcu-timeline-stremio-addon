@@ -1,6 +1,6 @@
 {
   "name": "mcu-timeline-stremio-addon",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Auto-updating Stremio catalog addon for Marvel/Disney+'s official MCU Complete Timeline",
   "main": "server.js",
   "scripts": {
