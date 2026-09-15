@@ -8,13 +8,14 @@ const metaCache = new Map();
 
 const manifest = {
   id: 'com.freakforest.mcutimeline',
-  version: '3.1.0',
+  version: '3.2.0',
   name: 'MCU Timeline – Official Chronology',
   description: 'Marvel/Disney+ MCU Complete Timeline in official chronological order. Auto-refreshes from Marvel and provides metadata only — no streams.',
   resources: ['catalog', 'meta'],
   types: ['movie', 'series'],
   idPrefixes: ['mcu-series-'],
   catalogs: [
+    { type: 'movie', id: 'mcu-timeline-all', name: 'MCU Timeline • Alt', extra: [{ name: 'skip', isRequired: false }] },
     { type: 'movie', id: 'mcu-timeline-movies', name: 'MCU Timeline • Film & Specials', extra: [{ name: 'skip', isRequired: false }] },
     { type: 'series', id: 'mcu-timeline-series', name: 'MCU Timeline • Serier', extra: [{ name: 'skip', isRequired: false }] },
     { type: 'movie', id: 'mcu-upcoming-movies', name: 'MCU • Kommende film', extra: [{ name: 'skip', isRequired: false }] },
@@ -169,6 +170,10 @@ builder.defineCatalogHandler(async (args) => {
   let source;
   let mapper;
   switch (args.id) {
+    case 'mcu-timeline-all':
+      source = timeline;
+      mapper = timelinePreview;
+      break;
     case 'mcu-timeline-movies':
       source = timeline.filter(x => x.type === 'movie' || x.type === 'unknown');
       mapper = async (entry) => {
