@@ -7,8 +7,9 @@ A metadata/catalog-only Stremio add-on that follows Marvel/Disney+'s **official 
 ## What it does
 
 - Shows the official MCU chronology with one global sequence number.
-- Provides a combined `MCU Timeline • Alt` catalog containing movies, specials, and series in the official chronological order.
+- Provides a combined `MCU Timeline • All` catalog containing movies, specials, and series in the official chronological order.
 - Also provides separate movies/specials and series catalogs as optional filtered views.
+- Returns the full catalog without an artificial item limit, so the complete official timeline is available in one catalog response.
 - Creates season-specific cards for shows that appear more than once in the official timeline.
 - Uses Cinemeta metadata so normal Stremio metadata and existing stream add-ons can continue to work.
 - Checks Marvel's official **“See the Complete MCU Timeline on Disney+”** page at most once every 24 hours.
@@ -22,11 +23,13 @@ https://www.marvel.com/articles/movies/mcu-timeline-order-disney-plus
 
 ## Catalogs
 
-- `MCU Timeline • Alt`
-- `MCU Timeline • Film & Specials`
-- `MCU Timeline • Serier`
-- `MCU • Kommende film`
-- `MCU • Kommende serier`
+- `MCU Timeline • All`
+- `MCU Timeline • Movies & Specials`
+- `MCU Timeline • Series`
+- `MCU • Upcoming Movies`
+- `MCU • Upcoming Series`
+
+All public-facing catalog names and descriptions are in English so the add-on can be used internationally.
 
 The number on each timeline card is the title's position in Marvel/Disney+'s complete timeline.
 
