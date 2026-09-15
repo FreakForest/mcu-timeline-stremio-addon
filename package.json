@@ -1,11 +1,12 @@
 {
   "name": "mcu-timeline-stremio-addon",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Auto-updating Stremio catalog addon for Marvel/Disney+'s official MCU Complete Timeline",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check addon.js && node --check official-data.js && node --check server.js && node --check publish.js",
+    "check": "node --check addon.js && node --check official-data.js && node --check server.js && node --check publish.js && node --check scripts/deploy-beamup.js",
+    "deploy:beamup": "node scripts/deploy-beamup.js",
     "publish": "node publish.js"
   },
   "engines": {
@@ -13,6 +14,9 @@
   },
   "dependencies": {
     "stremio-addon-sdk": "^1.6.10"
+  },
+  "devDependencies": {
+    "beamup-cli": "^1.3.2"
   },
   "license": "MIT"
 }
