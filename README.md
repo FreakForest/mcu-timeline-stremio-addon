@@ -5,7 +5,8 @@ A metadata/catalog-only Stremio add-on that follows Marvel/Disney+'s **official 
 ## What it does
 
 - Shows the official MCU chronology with one global sequence number.
-- Splits movies/specials and series into separate Stremio catalogs because Stremio catalogs have a fixed content type.
+- Provides a combined `MCU Timeline • Alt` catalog containing movies, specials, and series in the official chronological order.
+- Also provides separate movies/specials and series catalogs as optional filtered views.
 - Creates season-specific cards for shows that appear more than once in the official timeline.
 - Uses Cinemeta metadata so normal Stremio metadata and existing stream add-ons can continue to work.
 - Checks Marvel's official **“See the Complete MCU Timeline on Disney+”** page at most once every 24 hours.
@@ -19,6 +20,7 @@ https://www.marvel.com/articles/movies/mcu-timeline-order-disney-plus
 
 ## Catalogs
 
+- `MCU Timeline • Alt`
 - `MCU Timeline • Film & Specials`
 - `MCU Timeline • Serier`
 - `MCU • Kommende film`
@@ -75,7 +77,7 @@ No private SSH key is uploaded by the helper. Git/SSH uses the key already store
 Expected public manifest after a successful deployment:
 
 ```text
-https://0f9587522331-mcu-timeline-stremio-addon.beamup.club/manifest.json
+https://0f9587522331-mcu-timeline-stremio-addon.baby-beamup.club/manifest.json
 ```
 
 The app listens on `process.env.PORT`, as required by BeamUp.
@@ -103,3 +105,9 @@ If Marvel's site is temporarily unavailable, the add-on keeps serving the last v
 ## Data / stream policy
 
 This add-on is deliberately metadata-only. It contains no piracy sources and does not bypass any streaming service. Playback availability is determined by the user's other Stremio add-ons and legitimate services.
+
+## Disclaimer / AI assistance
+
+This project was created with significant assistance from **ChatGPT by OpenAI**, including help with research, code generation, debugging, documentation, and deployment setup. The project is maintained and published by `FreakForest`.
+
+This is an unofficial fan-made project and is not affiliated with, endorsed by, or sponsored by Marvel, Disney, Stremio, or OpenAI. All trademarks and names belong to their respective owners.
